@@ -1818,6 +1818,9 @@
   if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; }
   }
 
+  // Show recent keys on initial page load
+  document.addEventListener('DOMContentLoaded', renderRecentKeys);
+
   </script>
 </body>
 </html>

@@ -1421,7 +1421,11 @@
   document.getElementById('loginBtn').querySelector('span').textContent = 'Connect to Dashboard';
 
   if (data.error || data.status === 'error') {
-  alert('Invalid key or API error: ' + (data.error || 'Unknown'));
+  let msg = data.error || 'Unknown';
+  if (data.raw) {
+  msg += '\n\nRaw response:\n' + data.raw.substring(0, 300);
+  }
+  alert('API error: ' + msg);
   return;
   }
 

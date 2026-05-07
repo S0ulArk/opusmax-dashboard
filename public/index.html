@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpusMax — API Key Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+  :root {
+  --bg: #222831;
+  --surface: rgba(57, 62, 70, 0.85);
+  --surface-solid: #393E46;
+  --border: rgba(0, 173, 181, 0.1);
+  --accent: #00ADB5;
+  --accent-2: #008B92;
+  --accent-3: #00C5CC;
+  --text: #EEEEEE;
+  --text-secondary: #b0b5bc;
+  --text-muted: #6a727a;
+  --success: #00C897;
+  --warning: #FFB627;
+  --danger: #EF476F;
+  --glass: rgba(57, 62, 70, 0.7);
+  --glass-border: rgba(0, 173, 181, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  }
+
+  .bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+  radial-gradient(ellipse 80% 50% at 20% 20%, rgba(0, 173, 181, 0.04), transparent),
+  radial-gradient(ellipse 60% 60% at 80% 80%, rgba(255, 255, 255, 0.02), transparent),
+  radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255, 255, 255, 0.02), transparent);
+  animation: meshMove 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes meshMove {
+  0% { filter: hue-rotate(0deg); transform: scale(1); }
+  100% { filter: hue-rotate(20deg); transform: scale(1.05); }
+  }
+
+  .bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+  linear-gradient(rgba(0, 173, 181, 0.02) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0, 173, 181, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+  }
+
+  .container {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  }
+
+  /* ========== LOGIN SCREEN ========== */
+  .login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px;
+  }
+
+  .login-card {
+  width: 100%;
+  max-width: 560px;
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 56px 52px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+  0 0 0 1px rgba(0, 173, 181, 0.04),
+  0 20px 60px rgba(0, 0, 0, 0.5),
+  0 0 80px rgba(0, 173, 181, 0.04);
+  }
+
+  .login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 173, 181, 0.4), var(--accent-3), rgba(0, 173, 181, 0.4), transparent);
+  }
+
+  .login-card::after {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(0, 173, 181, 0.04), transparent 70%);
+  pointer-events: none;
+  }
+
+  .login-logo-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 32px;
+  }
+
+  .login-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 36px;
+  color: #fff;
+  box-shadow: 0 0 50px rgba(0, 173, 181, 0.35);
+  position: relative;
+  z-index: 1;
+  }
+
+  .login-logo-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 28px;
+  border: 1px solid rgba(0, 173, 181, 0.09);
+  animation: ringPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  .login-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(0, 173, 181, 0.04);
+  border: 1px solid rgba(0, 173, 181, 0.06);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 20px;
+  }
+
+  .login-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--success);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--success);
+  }
+
+  .login-card h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #fff, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  }
+
+  .login-card .subtitle {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  line-height: 1.5;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+  }
+
+  .login-input-group {
+  margin-bottom: 24px;
+  text-align: left;
+  }
+
+  .login-input-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: block;
+  }
+
+  .login-input-wrap {
+  display: flex;
+  gap: 10px;
+  }
+
+  .login-input-wrap input {
+  flex: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1.5px solid rgba(0, 173, 181, 0.05);
+  border-radius: 14px;
+  padding: 16px 20px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s;
+  letter-spacing: 0.3px;
+  }
+
+  .login-input-wrap input:focus {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 0 0 4px rgba(0, 173, 181, 0.04);
+  }
+
+  .login-input-wrap input::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+  .show-hide-btn {
+  padding: 16px 18px;
+  background: var(--surface-solid);
+  border: 1.5px solid var(--glass-border);
+  border-radius: 14px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  }
+
+  .show-hide-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: rgba(0, 173, 181, 0.04);
+  }
+
+  .connect-btn {
+  width: 100%;
+  padding: 16px 28px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  }
+
+  .connect-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+  }
+
+  .connect-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 173, 181, 0.35);
+  }
+
+  .connect-btn:hover::before { opacity: 1; }
+
+  .connect-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  }
+
+  .connect-btn svg, .connect-btn span { position: relative; z-index: 1; }
+
+  .security-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  }
+
+  .security-note svg { opacity: 0.6; }
+
+  .login-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 32px 0 24px;
+  }
+
+  .login-divider::before, .login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+  }
+
+  .login-divider span {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  }
+
+  .recent-keys { text-align: left; }
+
+  .recent-keys-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  }
+
+  .recent-key-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+  }
+
+  .recent-key-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  opacity: 0;
+  transition: opacity 0.25s;
+  border-radius: 0 2px 2px 0;
+  }
+
+  .recent-key-item:hover {
+  background: rgba(0, 173, 181, 0.04);
+  border-color: rgba(0, 173, 181, 0.06);
+  transform: translateX(4px);
+  }
+
+  .recent-key-item:hover::before { opacity: 1; }
+
+  .recent-key-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 173, 181, 0.06), rgba(0, 173, 181, 0.04));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 173, 181, 0.04);
+  }
+
+  .recent-key-info { flex: 1; min-width: 0; }
+
+  .recent-key-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+
+  .recent-key-prefix {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  }
+
+  .recent-key-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  }
+
+  .recent-key-time { font-size: 12px; color: var(--text-muted); }
+
+  .recent-key-arrow {
+  font-size: 14px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: all 0.25s;
+  }
+
+  .recent-key-item:hover .recent-key-arrow {
+  opacity: 1;
+  transform: translateX(2px);
+  color: var(--accent);
+  }
+
+  .no-recent {
+  text-align: center;
+  padding: 28px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,0.05);
+  }
+
+  /* ========== DASHBOARD ========== */
+  header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  }
+
+  .brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(129, 140, 248, 0.25);
+  }
+
+  .brand h1 {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  }
+
+  .brand span {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  }
+
+  .live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--success);
+  font-weight: 500;
+  }
+
+  .live-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--success);
+  animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+  }
+
+  .key-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  }
+
+  .key-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 12px 16px;
+  letter-spacing: 0.3px;
+  }
+
+  .key-bar input::placeholder { color: var(--text-muted); }
+
+  .key-bar button {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  }
+
+  .key-bar button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 173, 181, 0.1);
+  }
+
+  .key-bar button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  }
+
+  .key-bar .toggle-btn {
+  background: var(--surface-solid);
+  color: var(--text-secondary);
+  padding: 12px 16px;
+  }
+
+  .dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+  }
+
+  @media (max-width: 1100px) { .dashboard { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .dashboard { grid-template-columns: 1fr; } }
+
+  .card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  }
+
+  .card:hover {
+  border-color: rgba(0, 173, 181, 0.09);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+
+  .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 173, 181, 0.1), transparent);
+  }
+
+  .card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  }
+
+  .card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  }
+
+  .card-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  }
+
+  .card-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  line-height: 1.1;
+  }
+
+  .card-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  }
+
+  .card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+  }
+
+  .status-active { background: rgba(0, 200, 151, 0.1); color: var(--success); border: 1px solid rgba(0, 200, 151, 0.2); }
+  .status-inactive { background: rgba(239, 71, 111, 0.1); color: var(--danger); border: 1px solid rgba(239, 71, 111, 0.2); }
+  .status-warn { background: rgba(255, 182, 39, 0.1); color: var(--warning); border: 1px solid rgba(255, 182, 39, 0.2); }
+
+  .progress-track {
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  margin-top: 12px;
+  overflow: hidden;
+  }
+
+  .progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  }
+
+  .progress-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25));
+  }
+
+  .progress-low { background: linear-gradient(90deg, var(--success), #5eead4); }
+  .progress-med { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+  .progress-high { background: linear-gradient(90deg, var(--danger), #f87171); }
+
+  .main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+  }
+
+  @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+  .chart-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  }
+
+  .chart-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 173, 181, 0.1), transparent);
+  }
+
+  .chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  }
+
+  .chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  }
+
+  .chart-container {
+  position: relative;
+  height: 240px;
+  }
+
+  .model-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+  }
+
+  .model-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  }
+
+  .model-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  }
+
+  .model-info { flex: 1; }
+
+  .model-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+  }
+
+  .model-bar-track {
+  height: 4px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  overflow: hidden;
+  }
+
+  .model-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease;
+  }
+
+  .model-pct {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: right;
+  }
+
+  .timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+  }
+
+  .timeline::-webkit-scrollbar { width: 4px; }
+  .timeline::-webkit-scrollbar-track { background: transparent; }
+  .timeline::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 2px; }
+
+  .log-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  transition: all 0.2s;
+  }
+
+  .log-item:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(0, 173, 181, 0.06);
+  }
+
+  .log-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  }
+
+  .log-model {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  }
+
+  .log-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 200, 151, 0.1);
+  color: var(--success);
+  }
+
+  .log-time {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  }
+
+  .time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  }
+
+  .time-item {
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .time-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  }
+
+  .time-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  }
+
+  .time-countdown {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+  }
+
+  .stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  }
+
+  .stat-pill {
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  text-align: center;
+  }
+
+  .stat-pill-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  }
+
+  .stat-pill-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  }
+
+  .error-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--danger);
+  }
+
+  .error-state h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  }
+
+  .shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  }
+
+  @keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+  }
+
+  @keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-in {
+  animation: slideUp 0.5s ease forwards;
+  }
+
+  .delay-1 { animation-delay: 0.05s; opacity: 0; }
+  .delay-2 { animation-delay: 0.1s; opacity: 0; }
+  .delay-3 { animation-delay: 0.15s; opacity: 0; }
+  .delay-4 { animation-delay: 0.2s; opacity: 0; }
+  .delay-5 { animation-delay: 0.25s; opacity: 0; }
+
+  .key-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 4px 10px;
+  background: rgba(0, 173, 181, 0.05);
+  border: 1px solid rgba(0, 173, 181, 0.07);
+  border-radius: 6px;
+  color: var(--accent);
+  letter-spacing: 0.3px;
+  }
+
+  .refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--surface-solid);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  }
+
+  .refresh-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  }
+
+  .refresh-btn.spinning svg {
+  animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+
+  .hidden { display: none !important; }
+
+  /* ========== WINDOW TIMER CARD ========== */
+  .timer-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  position: relative;
+  overflow: hidden;
+  grid-column: 1 / -1;
+  margin-bottom: 16px;
+  }
+
+  .timer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 173, 181, 0.4), transparent);
+  }
+
+  .timer-card.glow-timer {
+  box-shadow: 0 0 40px rgba(0, 173, 181, 0.04);
+  }
+
+  .timer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  }
+
+  .timer-label-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  }
+
+  .timer-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(167,139,250,0.12), rgba(139,92,246,0.12));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 1px solid rgba(0, 173, 181, 0.07);
+  }
+
+  .timer-title-wrap h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  }
+
+  .timer-title-wrap p {
+  font-size: 13px;
+  color: var(--text-muted);
+  }
+
+  .timer-digits {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  }
+
+  .timer-digit-box {
+  background: rgba(0, 173, 181, 0.04);
+  border: 1px solid rgba(0, 173, 181, 0.06);
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-align: center;
+  min-width: 60px;
+  }
+
+  .timer-digit-box .num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  }
+
+  .timer-digit-box .lbl {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+  }
+
+  .timer-sep {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  padding-bottom: 14px;
+  }
+
+  .timer-bar-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.03);
+  }
+
+  .timer-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-3), var(--accent));
+  border-radius: 0 2px 2px 0;
+  transition: width 1s linear;
+  }
+
+  /* Timer warning state */
+  .timer-card.warning .timer-digit-box {
+  background: rgba(248, 113, 113, 0.06);
+  border-color: rgba(248, 113, 113, 0.15);
+  }
+
+  .timer-card.warning .timer-digit-box .num,
+  .timer-card.warning .timer-sep {
+  color: var(--danger);
+  }
+
+  .timer-card.warning .timer-bar-fill {
+  background: linear-gradient(90deg, var(--danger), var(--warning));
+  }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="login-screen">
+  <div class="login-card animate-in">
+  <div class="login-logo-wrap">
+  <div class="login-logo">O</div>
+  <div class="login-logo-ring"></div>
+  </div>
+
+  <div class="login-badge"><span class="dot"></span> Secure Connection</div>
+  <h1>OpusMax Dashboard</h1>
+  <p class="subtitle">Connect your API key to monitor usage, rate limits, and request analytics in real time.</p>
+
+  <div style="display:flex;justify-content:center;gap:12px;margin-bottom:28px;">
+  </div>
+
+  <div class="login-input-group">
+  <label class="login-input-label">API Key</label>
+  <div class="login-input-wrap">
+  <input type="password" id="loginKey" placeholder="sk-ant-opm-xxxxxxxxxxxx">
+  <button class="show-hide-btn" id="loginToggle" onclick="toggleLoginVisibility()">Show</button>
+  </div>
+  </div>
+
+  <button class="connect-btn" id="loginBtn" onclick="doLogin()">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 12h14"></path>
+  <path d="M12 5l7 7-7 7"></path>
+  </svg>
+  <span>Connect to Dashboard</span>
+  </button>
+
+  <div class="security-note">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+  Keys are stored locally in your browser
+  </div>
+
+  <div class="login-divider"><span>Recent</span></div>
+
+  <div class="recent-keys" id="recentKeysWrap">
+  <div id="recentKeysList"></div>
+  </div>
+  </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboardScreen" class="hidden">
+  <div class="container">
+  <header>
+  <div class="brand" onclick="goBack()" title="Back to login">
+  <div class="brand-logo">O</div>
+  <div>
+  <h1>OpusMax</h1>
+  <span>API Key Dashboard</span>
+  </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+  <div class="live-indicator">
+  <div class="live-dot"></div>
+  <span id="liveText">Live</span>
+  </div>
+  <button class="refresh-btn" id="refreshBtn" onclick="loadData()">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="23 4 23 10 17 10"></polyline>
+  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+  </svg>
+  Refresh
+  </button>
+  <button class="refresh-btn" onclick="goBack()" title="Switch key">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M9 14L4 9l5-5"></path>
+  <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"></path>
+  </svg>
+  Back
+  </button>
+  </div>
+  </header>
+
+  <div class="key-bar">
+  <input type="password" id="apiKey" placeholder="Enter your API key (sk-ant-...)" readonly>
+  <button class="toggle-btn" id="toggleKey" onclick="toggleKeyVisibility()" title="Show/Hide">Show</button>
+  <button id="loadBtn" onclick="loadData()">Refresh Now</button>
+  </div>
+
+  <div id="errorContainer"></div>
+
+  <div id="loadingState" class="hidden">
+  <div class="dashboard">
+  <div class="card"><div class="shimmer" style="height:80px;"></div></div>
+  <div class="card"><div class="shimmer" style="height:80px;"></div></div>
+  <div class="card"><div class="shimmer" style="height:80px;"></div></div>
+  <div class="card"><div class="shimmer" style="height:80px;"></div></div>
+  </div>
+  </div>
+
+  <div id="dashboardContent" class="hidden">
+  <!-- 1. WINDOW TIMER -->
+  <div class="timer-card glow-timer animate-in delay-1" id="timerCard">
+  <div class="timer-inner">
+  <div class="timer-label-section">
+  <div class="timer-icon">⏳</div>
+  <div class="timer-title-wrap">
+  <h3>5-Hour Window Reset</h3>
+  <p id="timerSubtext">Time remaining until your rate limit window resets</p>
+  </div>
+  </div>
+  <div class="timer-digits" id="timerDigits">
+  <div class="timer-digit-box"><div class="num" id="tH">--</div><div class="lbl">hrs</div></div>
+  <div class="timer-sep">:</div>
+  <div class="timer-digit-box"><div class="num" id="tM">--</div><div class="lbl">min</div></div>
+  <div class="timer-sep">:</div>
+  <div class="timer-digit-box"><div class="num" id="tS">--</div><div class="lbl">sec</div></div>
+  </div>
+  </div>
+  <div class="timer-bar-track">
+  <div class="timer-bar-fill" id="timerBar" style="width:100%"></div>
+  </div>
+  </div>
+
+  <!-- 2. USAGE -->
+  <div class="dashboard">
+  <div class="card animate-in delay-1" style="grid-column: span 2;">
+  <div class="card-header">
+  <div class="card-icon" style="background: rgba(139,92,246,0.1);">&#128200;</div>
+  <span class="card-label">Usage</span>
+  </div>
+  <div class="card-value" id="usagePercent">--%</div>
+  <div class="card-sub" id="usageLabel">of rate limit consumed</div>
+  <div class="progress-track">
+  <div class="progress-fill progress-low" id="usageBar" style="width:0%"></div>
+  </div>
+  </div>
+
+  <div class="card animate-in delay-2" style="grid-column: span 2;">
+  <div class="card-header">
+  <div class="card-icon" style="background: rgba(167,139,250,0.1);">&#128227;</div>
+  <span class="card-label">Last 24h</span>
+  </div>
+  <div class="card-value" id="last24h">--</div>
+  <div class="card-sub" id="totalRequests">Total: --</div>
+  <div style="margin-top:8px;">
+  <span class="key-badge" id="windowBadge">--</span>
+  </div>
+  </div>
+  </div>
+
+  <!-- 3. REQUEST TIMELINE -->
+  <div class="main-grid">
+  <div class="chart-card animate-in delay-2" style="grid-column: 1 / -1;">
+  <div class="chart-header">
+  <span class="chart-title">Request Timeline</span>
+  <span class="key-badge" id="logCount">0 logs</span>
+  </div>
+  <div class="timeline" id="timeline"></div>
+  </div>
+  </div>
+
+  <!-- 4. KEY STATUS + RATE LIMIT -->
+  <div class="dashboard">
+  <div class="card animate-in delay-1">
+  <div class="card-header">
+  <div class="card-icon" style="background: rgba(99,102,241,0.1);">&#128273;</div>
+  <span class="card-label">Key Status</span>
+  </div>
+  <div class="card-value" id="keyName">--</div>
+  <div class="card-sub" id="keyPrefix">--</div>
+  <div class="card-status status-active" id="keyStatus">--</div>
+  </div>
+
+  <div class="card animate-in delay-2">
+  <div class="card-header">
+  <div class="card-icon" style="background: rgba(196,181,253,0.1);">&#9889;</div>
+  <span class="card-label">Rate Limit</span>
+  </div>
+  <div class="card-value" id="rateLimit">--</div>
+  <div class="card-sub" id="rateSub">requests/minute</div>
+  <div class="card-status status-active" id="unlimitedBadge">--</div>
+  </div>
+
+  <!-- 5. MODEL CHART -->
+  <div class="card animate-in delay-3" style="grid-column: span 2;">
+  <div class="chart-header" style="margin-bottom: 12px;">
+  <span class="chart-title">Usage by Model</span>
+  <span class="key-badge" id="modelTotal">100%</span>
+  </div>
+  <div class="chart-container" style="height: 180px;">
+  <canvas id="modelChart"></canvas>
+  </div>
+  </div>
+  </div>
+
+  <!-- 6. KEY LIFECYCLE + HEALTH -->
+  <div class="main-grid">
+  <div class="chart-card animate-in delay-4">
+  <div class="chart-header">
+  <span class="chart-title">Key Lifecycle</span>
+  </div>
+  <div class="time-grid" id="timeGrid"></div>
+  </div>
+
+  <div class="chart-card animate-in delay-5">
+  <div class="chart-header">
+  <span class="chart-title">Health Indicators</span>
+  </div>
+  <div class="stats-row" id="healthGrid"></div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <script>
+  let chartInstance = null;
+  let currentKey = '';
+  let autoRefreshInterval = null;
+  let timerInterval = null;
+  let windowResetTime = null;
+  let windowStartTime = null;
+
+  const RECENT_KEYS_KEY = 'opusmax_recent_keys';
+
+  // ========== LOGIN SCREEN ==========
+  function toggleLoginVisibility() {
+  const input = document.getElementById('loginKey');
+  const btn = document.getElementById('loginToggle');
+  if (input.type === 'password') {
+  input.type = 'text';
+  btn.textContent = 'Hide';
+  } else {
+  input.type = 'password';
+  btn.textContent = 'Show';
+  }
+  }
+
+  function getRecentKeys() {
+  try {
+  return JSON.parse(localStorage.getItem(RECENT_KEYS_KEY) || '[]');
+  } catch { return []; }
+  }
+
+  function saveRecentKey(key, name, prefix) {
+  if (!key) return;
+  let recent = getRecentKeys();
+  recent = recent.filter(k => k.key !== key);
+  recent.unshift({ key, name: name || 'Unknown Key', prefix: prefix || key.slice(0, 20), usedAt: Date.now() });
+  recent = recent.slice(0, 5);
+  localStorage.setItem(RECENT_KEYS_KEY, JSON.stringify(recent));
+  }
+
+  function renderRecentKeys() {
+  const list = document.getElementById('recentKeysList');
+  const recent = getRecentKeys();
+  if (recent.length === 0) {
+  list.innerHTML = '<div class="no-recent">No recent keys yet &mdash; connect one above</div>';
+  return;
+  }
+  list.innerHTML = recent.slice(0, 3).map((k, i) => `
+  <div class="recent-key-item" onclick="loginWithKey('${k.key.replace(/'/g, "\\'")}')" style="animation:slideUp 0.3s ease forwards;animation-delay:${i*0.05}s;opacity:0;">
+  <div class="recent-key-icon">&#128273;</div>
+  <div class="recent-key-info">
+  <div class="recent-key-name">${escapeHtml(k.name)}</div>
+  <div class="recent-key-prefix">${escapeHtml(k.prefix)}...</div>
+  </div>
+  <div class="recent-key-meta">
+  <div class="recent-key-time">${timeAgoMs(k.usedAt)}</div>
+  <div class="recent-key-arrow">&#8594;</div>
+  </div>
+  </div>
+  `).join('');
+  }
+
+  function loginWithKey(key) {
+  document.getElementById('loginKey').value = key;
+  doLogin();
+  }
+
+  function doLogin() {
+  const key = document.getElementById('loginKey').value.trim();
+  if (!key) return;
+
+  document.getElementById('loginBtn').disabled = true;
+  document.getElementById('loginBtn').querySelector('span').textContent = 'Connecting...';
+
+  fetch(`/api/proxy-key-status?key=${encodeURIComponent(key)}`)
+  .then(r => r.json())
+  .then(data => {
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginBtn').querySelector('span').textContent = 'Connect to Dashboard';
+
+  if (data.error || data.status === 'error') {
+  alert('Invalid key or API error: ' + (data.error || 'Unknown'));
+  return;
+  }
+
+  saveRecentKey(key, data.name, data.keyPrefix);
+  currentKey = key;
+  showDashboard();
+  document.getElementById('apiKey').value = key;
+  renderDashboard(data);
+  startAutoRefresh();
+  startTimer(data);
+  })
+  .catch(err => {
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginBtn').querySelector('span').textContent = 'Connect to Dashboard';
+  alert('Failed to connect: ' + err.message);
+  });
+  }
+
+  function showDashboard() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('dashboardScreen').classList.remove('hidden');
+  }
+
+  function goBack() {
+  stopAutoRefresh();
+  stopTimer();
+  document.getElementById('dashboardScreen').classList.add('hidden');
+  document.getElementById('dashboardContent').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  renderRecentKeys();
+  }
+
+  // ========== DASHBOARD ==========
+  function toggleKeyVisibility() {
+  const input = document.getElementById('apiKey');
+  const btn = document.getElementById('toggleKey');
+  if (input.type === 'password') {
+  input.type = 'text';
+  btn.textContent = 'Hide';
+  } else {
+  input.type = 'password';
+  btn.textContent = 'Show';
+  }
+  }
+
+  function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function formatDate(iso) {
+  if (!iso) return 'N/A';
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function timeUntil(iso) {
+  if (!iso) return '';
+  const diff = new Date(iso) - Date.now();
+  if (diff <= 0) return 'Expired';
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  return h > 0 ? `${h}h ${m}m remaining` : `${m}m remaining`;
+  }
+
+  function timeAgo(iso) {
+  if (!iso) return 'Never';
+  const diff = Date.now() - new Date(iso);
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'Just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+  }
+
+  function timeAgoMs(ts) {
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'Just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+  }
+
+  function getProgressClass(pct) {
+  if (pct < 50) return 'progress-low';
+  if (pct < 80) return 'progress-med';
+  return 'progress-high';
+  }
+
+  // ========== TIMER ==========
+  function startTimer(data) {
+  stopTimer();
+  if (data.windowStartedAt) windowStartTime = new Date(data.windowStartedAt).getTime();
+  if (data.windowResetAt) windowResetTime = new Date(data.windowResetAt).getTime();
+  updateTimer();
+  timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function updateTimer() {
+  if (!windowResetTime || !windowStartTime) return;
+  const now = Date.now();
+  const total = windowResetTime - windowStartTime;
+  const remaining = windowResetTime - now;
+  const card = document.getElementById('timerCard');
+
+  if (remaining <= 0) {
+  document.getElementById('tH').textContent = '00';
+  document.getElementById('tM').textContent = '00';
+  document.getElementById('tS').textContent = '00';
+  document.getElementById('timerBar').style.width = '0%';
+  document.getElementById('timerSubtext').textContent = 'Window has reset';
+  card.classList.remove('warning');
+  return;
+  }
+
+  const h = Math.floor(remaining / 3600000);
+  const m = Math.floor((remaining % 3600000) / 60000);
+  const s = Math.floor((remaining % 60000) / 1000);
+
+  document.getElementById('tH').textContent = String(h).padStart(2, '0');
+  document.getElementById('tM').textContent = String(m).padStart(2, '0');
+  document.getElementById('tS').textContent = String(s).padStart(2, '0');
+
+  const pct = Math.max(0, Math.min(100, (remaining / total) * 100));
+  document.getElementById('timerBar').style.width = pct + '%';
+
+  if (remaining < 600000) {
+  document.getElementById('timerSubtext').textContent = 'Less than 10 minutes left!';
+  document.getElementById('timerSubtext').style.color = 'var(--danger)';
+  card.classList.add('warning');
+  } else {
+  document.getElementById('timerSubtext').textContent = 'Time remaining until your rate limit window resets';
+  document.getElementById('timerSubtext').style.color = '';
+  card.classList.remove('warning');
+  }
+  }
+
+  // ========== CHARTS ==========
+  function renderModelChart(byModel) {
+  const ctx = document.getElementById('modelChart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+
+  const labels = [];
+  const data = [];
+  const colors = [];
+
+  const modelColors = {
+  opus: { solid: '#00ADB5' },
+  sonnet: { solid: '#008B92' },
+  haiku: { solid: '#c4b5fd' }
+  };
+
+  for (const [model, info] of Object.entries(byModel || {})) {
+  labels.push(model.charAt(0).toUpperCase() + model.slice(1));
+  data.push(info.percent || 0);
+  const c = modelColors[model] || { solid: '#6a727a' };
+  colors.push(c.solid);
+  }
+
+  const modelList = document.getElementById('modelList');
+  if (modelList) modelList.remove();
+
+  const listDiv = document.createElement('div');
+  listDiv.id = 'modelList';
+  listDiv.className = 'model-list';
+  labels.forEach((label, i) => {
+  listDiv.innerHTML += `
+  <div class="model-item">
+  <div class="model-color" style="background:${colors[i]}"></div>
+  <div class="model-info">
+  <div class="model-name">${label}</div>
+  <div class="model-bar-track">
+  <div class="model-bar-fill" style="width:${data[i]}%;background:${colors[i]}"></div>
+  </div>
+  </div>
+  <div class="model-pct">${data[i].toFixed(1)}%</div>
+  </div>
+  `;
+  });
+
+  document.getElementById('modelChart').parentNode.parentNode.appendChild(listDiv);
+
+  chartInstance = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+  labels,
+  datasets: [{
+  data,
+  backgroundColor: colors,
+  borderColor: 'rgba(7, 9, 18, 0.8)',
+  borderWidth: 3,
+  hoverOffset: 8
+  }]
+  },
+  options: {
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '70%',
+  plugins: {
+  legend: { display: false },
+  tooltip: {
+  backgroundColor: 'rgba(13, 17, 31, 0.95)',
+  borderColor: 'rgba(0, 173, 181, 0.09)',
+  borderWidth: 1,
+  padding: 12,
+  titleFont: { family: 'Inter', size: 13, weight: '600' },
+  bodyFont: { family: 'Inter', size: 12 },
+  callbacks: { label: (ctx) => ` ${ctx.parsed.toFixed(1)}% usage` }
+  }
+  },
+  animation: { animateRotate: true, duration: 1200, easing: 'easeOutQuart' }
+  }
+  });
+  }
+
+  function renderTimeline(logs) {
+  const container = document.getElementById('timeline');
+  container.innerHTML = '';
+  (logs || []).slice(0, 20).forEach((log, i) => {
+  const el = document.createElement('div');
+  el.className = 'log-item';
+  el.style.animation = `slideUp 0.3s ease forwards`;
+  el.style.animationDelay = `${i * 0.03}s`;
+  el.style.opacity = '0';
+
+  const statusColor = log.status >= 200 && log.status < 300 ? 'var(--success)' :
+  log.status >= 400 ? 'var(--danger)' : 'var(--warning)';
+
+  el.innerHTML = `
+  <div class="log-status" style="background:${statusColor}"></div>
+  <div class="log-model">${log.model || 'unknown'}</div>
+  <div class="log-code">${log.status}</div>
+  <div class="log-time">${timeAgo(log.time)}</div>
+  `;
+  container.appendChild(el);
+  });
+  }
+
+  function renderTimeGrid(data) {
+  const grid = document.getElementById('timeGrid');
+  const times = [
+  { label: 'Created', value: formatDate(data.createdAt), raw: data.createdAt },
+  { label: 'Expires', value: formatDate(data.expiresAt), raw: data.expiresAt, countdown: true },
+  { label: 'Last Used', value: formatDate(data.lastUsedAt), raw: data.lastUsedAt },
+  { label: 'Window Started', value: formatDate(data.windowStartedAt), raw: data.windowStartedAt },
+  { label: 'Window Resets', value: formatDate(data.windowResetAt), raw: data.windowResetAt, countdown: true },
+  ];
+
+  grid.innerHTML = times.map(t => `
+  <div class="time-item">
+  <div class="time-label">${t.label}</div>
+  <div class="time-value">${t.value}</div>
+  ${t.countdown ? `<div class="time-countdown">${timeUntil(t.raw)}</div>` : ''}
+  </div>
+  `).join('');
+  }
+
+  function renderHealth(data) {
+  const grid = document.getElementById('healthGrid');
+  const health = [
+  { label: 'Active', value: data.isActive ? 'Yes' : 'No', color: data.isActive ? 'var(--success)' : 'var(--danger)' },
+  { label: 'Expired', value: data.isExpired ? 'Yes' : 'No', color: data.isExpired ? 'var(--danger)' : 'var(--success)' },
+  { label: 'Over Limit', value: data.isOverLimit ? 'Yes' : 'No', color: data.isOverLimit ? 'var(--danger)' : 'var(--success)' },
+  { label: 'Unlimited', value: data.unlimited ? 'Yes' : 'No', color: data.unlimited ? 'var(--accent)' : 'var(--text-muted)' },
+  { label: 'Window Active', value: data.windowActive ? 'Yes' : 'No', color: data.windowActive ? 'var(--text)' : 'var(--text-muted)' },
+  { label: 'Status', value: data.status === 'found' ? 'Found' : data.status, color: 'var(--accent)' },
+  ];
+
+  grid.innerHTML = health.map(h => `
+  <div class="stat-pill">
+  <div class="stat-pill-value" style="color:${h.color}">${h.value}</div>
+  <div class="stat-pill-label">${h.label}</div>
+  </div>
+  `).join('');
+  }
+
+  // ========== DATA LOADING ==========
+  async function loadData() {
+  if (!currentKey) return;
+
+  document.getElementById('loadBtn').disabled = true;
+  document.getElementById('refreshBtn').classList.add('spinning');
+  document.getElementById('loadingState').classList.remove('hidden');
+  document.getElementById('dashboardContent').classList.add('hidden');
+  document.getElementById('errorContainer').innerHTML = '';
+
+  try {
+  const res = await fetch(`/api/proxy-key-status?key=${encodeURIComponent(currentKey)}`);
+  const data = await res.json();
+
+  if (!res.ok || data.error) {
+  showError(data.error || `HTTP ${res.status}`);
+  return;
+  }
+
+  saveRecentKey(currentKey, data.name, data.keyPrefix);
+  renderDashboard(data);
+  startTimer(data);
+  } catch (err) {
+  showError(err.message);
+  } finally {
+  document.getElementById('loadBtn').disabled = false;
+  document.getElementById('refreshBtn').classList.remove('spinning');
+  document.getElementById('loadingState').classList.add('hidden');
+  }
+  }
+
+  function renderDashboard(data) {
+  document.getElementById('dashboardContent').classList.remove('hidden');
+
+  // Usage
+  const pct = data.usagePercent || 0;
+  document.getElementById('usagePercent').textContent = pct.toFixed(1) + '%';
+  document.getElementById('usageLabel').textContent = pct > 100 ? 'over limit' : 'of rate limit consumed';
+  const bar = document.getElementById('usageBar');
+  bar.style.width = Math.min(pct, 100) + '%';
+  bar.className = 'progress-fill ' + getProgressClass(pct);
+
+  // Last 24h
+  document.getElementById('last24h').textContent = (data.last24h?.requests || 0).toLocaleString();
+  document.getElementById('totalRequests').textContent = 'Total: ' + (data.totalRequests || 0).toLocaleString();
+  const winBadge = document.getElementById('windowBadge');
+  if (data.windowActive) {
+  winBadge.textContent = 'Window Active';
+  winBadge.style.background = 'rgba(0, 173, 181, 0.05)';
+  winBadge.style.color = 'var(--text)';
+  winBadge.style.border = '1px solid rgba(0, 173, 181, 0.09)';
+  } else {
+  winBadge.textContent = 'Window Idle';
+  winBadge.style.background = 'rgba(255,255,255,0.02)';
+  winBadge.style.color = 'var(--text-muted)';
+  winBadge.style.border = '1px solid rgba(255,255,255,0.05)';
+  }
+
+  // Timeline
+  document.getElementById('logCount').textContent = `${(data.recentLogs || []).length} logs`;
+  renderTimeline(data.recentLogs);
+
+  // Key Status
+  document.getElementById('keyName').textContent = data.name || 'Unknown';
+  document.getElementById('keyPrefix').textContent = data.keyPrefix || '';
+  const statusEl = document.getElementById('keyStatus');
+  if (data.isActive) {
+  statusEl.textContent = 'Active';
+  statusEl.className = 'card-status status-active';
+  } else {
+  statusEl.textContent = 'Inactive';
+  statusEl.className = 'card-status status-inactive';
+  }
+
+  // Rate Limit
+  document.getElementById('rateLimit').textContent = data.rateLimit || 0;
+  const unlBadge = document.getElementById('unlimitedBadge');
+  if (data.unlimited) {
+  unlBadge.textContent = 'Unlimited';
+  unlBadge.className = 'card-status status-active';
+  } else {
+  unlBadge.textContent = 'Limited';
+  unlBadge.className = 'card-status status-warn';
+  }
+
+  // Model Chart
+  renderModelChart(data.byModel);
+
+  // Time Grid
+  renderTimeGrid(data);
+
+  // Health
+  renderHealth(data);
+
+  document.getElementById('liveText').textContent = 'Live · refreshed ' + timeAgo(new Date().toISOString());
+  }
+
+  function showError(msg) {
+  document.getElementById('errorContainer').innerHTML = `
+  <div class="error-state">
+  <h3>Failed to load data</h3>
+  <p>${msg}</p>
+  </div>
+  `;
+  }
+
+  function startAutoRefresh() {
+  if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+  autoRefreshInterval = setInterval(() => {
+  if (currentKey) loadData();
+  }, 30000);
+  }
+
+  function stopAutoRefresh() {
+  if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; }
+  }
+
+  </script>
+</body>
+</html>

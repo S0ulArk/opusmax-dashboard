@@ -1657,11 +1657,12 @@
   const statusColor = log.status >= 200 && log.status < 300 ? 'var(--success)' :
   log.status >= 400 ? 'var(--danger)' : 'var(--warning)';
 
+  const exactTime = log.time ? new Date(log.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'N/A';
   el.innerHTML = `
   <div class="log-status" style="background:${statusColor}"></div>
   <div class="log-model">${log.model || 'unknown'}</div>
   <div class="log-code">${log.status}</div>
-  <div class="log-time">${timeAgo(log.time)}</div>
+  <div class="log-time">${exactTime} · ${timeAgo(log.time)}</div>
   `;
   container.appendChild(el);
   });

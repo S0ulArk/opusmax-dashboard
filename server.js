@@ -16,24 +16,47 @@ app.get('/api/proxy-key-status', async (req, res) => {
   return res.status(400).json({ error: 'Missing key parameter' });
   }
 
-  const apiUrl = `https://api.opusmax.live/api/key-status?key=${encodeURIComponent(key)}`;
+  const options = {
+  hostname: 'api.opusmax.live',
+  port: 443,
+  path: `/api/key-status?key=${encodeURIComponent(key)}`,
+  method: 'GET',
+  headers: {
+  'User-Agent': 'OpusMax-Dashboard/1.0',
+  'Accept': 'application/json'
+  }
+  };
 
-  const client = apiUrl.startsWith('https') ? https : http;
-
-  client.get(apiUrl, (apiRes) => {
+  const apiReq = https.request(options, (apiRes) => {
   let data = '';
   apiRes.on('data', chunk => data += chunk);
   apiRes.on('end', () => {
+  const contentType = apiRes.headers['content-type'] || '';
+  if (!contentType.includes('application/json')) {
+  return res.status(502).json({
+  error: 'Upstream returned non-JSON',
+  contentType: contentType,
+  raw: data.slice(0, 2000)
+  });
+  }
   try {
   const json = JSON.parse(data);
   res.json(json);
   } catch (e) {
-  res.status(500).json({ error: 'Invalid JSON from upstream', raw: data });
+  res.status(500).json({
+  error: 'Invalid JSON from upstream',
+  raw: data.slice(0, 2000),
+  parseError: e.message
+  });
   }
   });
-  }).on('error', (err) => {
+  });
+
+  apiReq.on('error', (err) => {
   res.status(500).json({ error: err.message });
   });
+
+  apiReq.end();
 });
 
 app.listen(PORT, () => {

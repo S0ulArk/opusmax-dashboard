@@ -1258,21 +1258,9 @@
   </div>
   </div>
 
-  <!-- 2. USAGE + LAST 24H -->
+  <!-- 2. LAST 24H + USAGE -->
   <div class="two-col-grid">
   <div class="card animate-in delay-1">
-  <div class="card-header">
-  <div class="card-icon" style="background: rgba(139,92,246,0.1);">&#128200;</div>
-  <span class="card-label">Usage</span>
-  </div>
-  <div class="card-value" id="usagePercent">--%</div>
-  <div class="card-sub" id="usageLabel">of rate limit consumed</div>
-  <div class="progress-track">
-  <div class="progress-fill progress-low" id="usageBar" style="width:0%"></div>
-  </div>
-  </div>
-
-  <div class="card animate-in delay-2">
   <div class="card-header">
   <div class="card-icon" style="background: rgba(167,139,250,0.1);">&#128227;</div>
   <span class="card-label">Last 24h</span>
@@ -1281,6 +1269,18 @@
   <div class="card-sub" id="totalRequests">Total: --</div>
   <div style="margin-top:8px;">
   <span class="key-badge" id="windowBadge">--</span>
+  </div>
+  </div>
+
+  <div class="card animate-in delay-2">
+  <div class="card-header">
+  <div class="card-icon" style="background: rgba(139,92,246,0.1);">&#128200;</div>
+  <span class="card-label">Usage</span>
+  </div>
+  <div class="card-value" id="usagePercent">--%</div>
+  <div class="card-sub" id="usageLabel">of rate limit consumed</div>
+  <div class="progress-track">
+  <div class="progress-fill progress-low" id="usageBar" style="width:0%"></div>
   </div>
   </div>
   </div>
